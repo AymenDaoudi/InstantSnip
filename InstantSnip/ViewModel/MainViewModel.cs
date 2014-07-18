@@ -72,10 +72,11 @@ namespace InstantSnip.ViewModel
                                                  var bitmap = CaptureScreen();
 
                                                  //bitmap.Save(@"C:/Users/Aymen/Desktop/test.png", ImageFormat.Png);
-
+                                                                            
                                                  var screenShotWindow = new ScreeShotView();
                                                  screenShotWindow.Show();
                                                  Messenger.Default.Send(bitmap);
+
 
                                                  Application.Current.MainWindow.Show();
                                              });
