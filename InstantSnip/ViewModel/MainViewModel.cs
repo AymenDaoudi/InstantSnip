@@ -77,7 +77,6 @@ namespace InstantSnip.ViewModel
                                                  screenShotWindow.Show();
                                                  Messenger.Default.Send(bitmap);
 
-
                                                  Application.Current.MainWindow.Show();
                                              });
         }
