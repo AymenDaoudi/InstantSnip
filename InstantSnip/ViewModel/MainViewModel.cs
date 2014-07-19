@@ -1,24 +1,15 @@
 ﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using InstantSnip.Model;
 using InstantSnip.Views;
 using Application = System.Windows.Application;
 using Point = System.Drawing.Point;
 
 namespace InstantSnip.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class MainViewModel : ViewModelBase
     {
 
@@ -54,7 +45,6 @@ namespace InstantSnip.ViewModel
 
         #endregion
         
-
         public MainViewModel()
         {
             InitRelayCommands();
@@ -102,10 +92,7 @@ namespace InstantSnip.ViewModel
 
 
         #region Fields
-
         private Visibility _windowVisibility;
-
-
         #endregion
     }
 }

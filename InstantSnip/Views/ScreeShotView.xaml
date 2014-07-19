@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.ignore.com"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d ignore"
         DataContext="{Binding ScreenShotViewModel, Source={StaticResource Locator}}" 
         ResizeMode="NoResize" 
@@ -22,15 +23,31 @@
     </i:Interaction.Triggers>
 
 
-    <Canvas>
+    <Canvas >
         <Canvas.Background>
             <ImageBrush ImageSource="{Binding ScreenShotImageSource}"/>
         </Canvas.Background>
-        <Path Stroke="Black" StrokeThickness="1" Fill="#66FFFFFF" >
+
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="MouseLeftButtonDown">
+                <command:EventToCommand  Command="{Binding MouseLeftButtonDown}" PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+
+            <i:EventTrigger EventName="MouseLeftButtonUp">
+                <command:EventToCommand  Command="{Binding MouseLeftButtonUp}"/>
+            </i:EventTrigger>
+
+            <i:EventTrigger EventName="MouseMove">
+                <command:EventToCommand  Command="{Binding MouseMove}" PassEventArgsToCommand="True"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+
+
+        <Path Stroke="Red" StrokeThickness="2" Fill="#66FFFFFF" StrokeDashArray="4 2" Margin="-1,-1,+1,+1" >
             <Path.Data>
                 <GeometryGroup >
-                    <RectangleGeometry x:Name="BackRectangle" Rect="{Binding BackRect}" />
-                    <RectangleGeometry x:Name="SelectionRectangle"  Rect="{Binding SelectionRect}" />
+                    <RectangleGeometry  Rect="{Binding BackRect}"  />
+                    <RectangleGeometry  Rect="{Binding SelectionRect}" />
                 </GeometryGroup>
             </Path.Data>
         </Path>

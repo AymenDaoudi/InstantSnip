@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -11,12 +15,6 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace InstantSnip.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that a View can data bind to.
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class ScreenShotViewModel : ViewModelBase
     {
         #region Properties
@@ -32,7 +30,6 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("ScreenShotImageSource");
             }
         }
-
 
         public Rect BackRect
         {
@@ -74,12 +71,22 @@ namespace InstantSnip.ViewModel
             }
         }
 
+        public bool IsSelecting { get; set; }
+
+        public System.Windows.Point SelectionStartingPosition{ get; set; }
+
         #endregion
 
 
         #region RelayCommands
 
         public RelayCommand WindowLoaded { get; set; }
+        public RelayCommand<MouseButtonEventArgs> MouseLeftButtonDown { get; set; }
+        public RelayCommand MouseLeftButtonUp { get; set; }
+        public RelayCommand<MouseEventArgs> MouseMove { get; set; }
+
+
+        
         #endregion
 
 
@@ -109,9 +116,98 @@ namespace InstantSnip.ViewModel
         {
             WindowLoaded = new RelayCommand(() =>
             {
-                BackRect = new Rect(0, 0, WindowWidth, WindowHeight);
-                SelectionRect = new Rect(10, 10, 222, 222);
+                BackRect = new Rect(0, 0, WindowWidth + 4, WindowHeight+ 4);
+                SelectionRect = new Rect(0, 0, 0,0);
             });
+
+            MouseLeftButtonDown = new RelayCommand<MouseButtonEventArgs>((e) =>
+                                                   {
+                                                       IsSelecting = true;
+                                                       var parent = new DependencyObject();
+                                                       if (e.Source is System.Windows.Shapes.Path)
+                                                       {
+                                                           parent = VisualTreeHelper.GetParent((System.Windows.Shapes.Path)e.Source);
+                                                       }
+                                                       else
+                                                       {
+                                                           parent = (Canvas)e.Source;
+                                                       }
+                                                       SelectionStartingPosition = new System.Windows.Point(e.GetPosition((Canvas)parent).X, e.GetPosition((Canvas)parent).Y);
+                                                   });
+
+            MouseLeftButtonUp = new RelayCommand(()=>IsSelecting=false);
+
+            MouseMove = new RelayCommand<MouseEventArgs>((e) =>
+                             {
+                                 if (!IsSelecting) return;
+                                 var parent = new DependencyObject();
+                                 if (e.Source is System.Windows.Shapes.Path)
+                                 {
+                                     parent = VisualTreeHelper.GetParent((System.Windows.Shapes.Path) e.Source);
+                                 }
+                                 else
+                                 {
+                                     parent = (Canvas) e.Source;
+                                 }
+
+                                 // From here and on the code is bad, I'll inhance it
+
+                                 double selectionWidth = 0;
+                                 double selectionHeight = 0;
+
+                                 double RectLeft = 0;
+                                 double RectTop = 0;
+
+                                 if ((e.GetPosition(parent as Canvas).X > SelectionStartingPosition.X) &&
+                                     (e.GetPosition(parent as Canvas).Y > SelectionStartingPosition.Y))
+                                 {
+                                     selectionWidth = e.GetPosition(parent as Canvas).X -
+                                                      SelectionStartingPosition.X;
+                                     selectionHeight = e.GetPosition(parent as Canvas).Y -
+                                                       SelectionStartingPosition.Y;
+                                     RectLeft = SelectionStartingPosition.X;
+                                     RectTop = SelectionStartingPosition.Y;
+                                 }
+                                 else
+                                 {
+                                     if ((e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X) &&
+                                         (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y))
+                                     {
+                                         RectLeft = e.GetPosition(parent as Canvas).X;
+                                         RectTop = e.GetPosition(parent as Canvas).Y;
+
+                                         selectionWidth = SelectionStartingPosition.X - RectLeft;
+                                         selectionHeight = SelectionStartingPosition.Y - RectTop;                                             
+                                     }
+                                     else
+                                     {
+                                         if (e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X)
+                                         {
+                                             RectLeft = e.GetPosition(parent as Canvas).X;
+                                             RectTop = SelectionStartingPosition.Y;
+                                                 
+                                             selectionWidth = SelectionStartingPosition.X - RectLeft;
+                                             selectionHeight = e.GetPosition(parent as Canvas).Y -
+                                                               SelectionStartingPosition.Y;
+                                         }
+                                         else
+                                         {
+                                             if (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y)
+                                             {
+                                                 RectLeft = SelectionStartingPosition.X;
+                                                 RectTop = e.GetPosition(parent as Canvas).Y;
+
+                                                 selectionWidth = e.GetPosition(parent as Canvas).X -
+                                                                  SelectionStartingPosition.X;
+                                                 selectionHeight = SelectionStartingPosition.Y - RectTop;
+                                                     
+                                             }
+                                         }
+                                     }
+                                 }
+
+                                 SelectionRect = new Rect(RectLeft, RectTop, selectionWidth, selectionHeight);
+                             });
         }
 
 

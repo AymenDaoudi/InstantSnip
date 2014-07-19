@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace InstantSnip.Views
@@ -15,5 +16,6 @@ namespace InstantSnip.Views
         {
             InitializeComponent();
         }
+
     }
 }
