@@ -1,15 +1,39 @@
-﻿<Window x:Class="InstantSnip.Views.ScreeShotView"
+﻿<Window x:Name="window" x:Class="InstantSnip.Views.ScreeShotView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.ignore.com"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d ignore"
-        DataContext="{Binding ScreenShotViewModel, Source={StaticResource Locator}}"  ResizeMode="NoResize" ShowInTaskbar="False" WindowState="Maximized" WindowStyle="None">
+        DataContext="{Binding ScreenShotViewModel, Source={StaticResource Locator}}" 
+        ResizeMode="NoResize" 
+        ShowInTaskbar="False" 
+        WindowState="Maximized" 
+        WindowStyle="None"
+        Width="{Binding WindowWidth, Mode=OneWayToSource}"
+        Height="{Binding WindowHeight, Mode=OneWayToSource}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoaded, Mode=TwoWay}" >
+            </i:InvokeCommandAction>
+            
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
-    <Grid OpacityMask="#66FFFFFF">
-        <Grid.Background>
+
+    <Canvas>
+        <Canvas.Background>
             <ImageBrush ImageSource="{Binding ScreenShotImageSource}"/>
-        </Grid.Background>
-    </Grid>
+        </Canvas.Background>
+        <Path Stroke="Black" StrokeThickness="1" Fill="#66FFFFFF" >
+            <Path.Data>
+                <GeometryGroup >
+                    <RectangleGeometry x:Name="BackRectangle" Rect="{Binding BackRect}" />
+                    <RectangleGeometry x:Name="SelectionRectangle"  Rect="{Binding SelectionRect}" />
+                </GeometryGroup>
+            </Path.Data>
+        </Path>
+    </Canvas>
+
 </Window>
