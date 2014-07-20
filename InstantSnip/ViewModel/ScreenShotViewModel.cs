@@ -148,80 +148,79 @@ namespace InstantSnip.ViewModel
                                                      CaptureSelection();
                                                  });
 
-            MouseMove = new RelayCommand<MouseEventArgs>((e) =>
-                             {
-                                 if (!IsSelecting) return;
-                                 var parent = new DependencyObject();
-                                 if (e.Source is System.Windows.Shapes.Path)
-                                 {
-                                     parent = VisualTreeHelper.GetParent((System.Windows.Shapes.Path) e.Source);
-                                 }
-                                 else
-                                 {
-                                     parent = (Canvas) e.Source;
-                                 }
-
-                                 // From here and on the code is bad, I'll inhance it
-
-                                 double selectionWidth = 0;
-                                 double selectionHeight = 0;
-
-                                 double RectLeft = 0;
-                                 double RectTop = 0;
-
-                                 if ((e.GetPosition(parent as Canvas).X > SelectionStartingPosition.X) &&
-                                     (e.GetPosition(parent as Canvas).Y > SelectionStartingPosition.Y))
-                                 {
-                                     selectionWidth = e.GetPosition(parent as Canvas).X -
-                                                      SelectionStartingPosition.X;
-                                     selectionHeight = e.GetPosition(parent as Canvas).Y -
-                                                       SelectionStartingPosition.Y;
-                                     RectLeft = SelectionStartingPosition.X;
-                                     RectTop = SelectionStartingPosition.Y;
-                                 }
-                                 else
-                                 {
-                                     if ((e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X) &&
-                                         (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y))
-                                     {
-                                         RectLeft = e.GetPosition(parent as Canvas).X;
-                                         RectTop = e.GetPosition(parent as Canvas).Y;
-
-                                         selectionWidth = SelectionStartingPosition.X - RectLeft;
-                                         selectionHeight = SelectionStartingPosition.Y - RectTop;                                             
-                                     }
-                                     else
-                                     {
-                                         if (e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X)
-                                         {
-                                             RectLeft = e.GetPosition(parent as Canvas).X;
-                                             RectTop = SelectionStartingPosition.Y;
-                                                 
-                                             selectionWidth = SelectionStartingPosition.X - RectLeft;
-                                             selectionHeight = e.GetPosition(parent as Canvas).Y -
-                                                               SelectionStartingPosition.Y;
-                                         }
-                                         else
-                                         {
-                                             if (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y)
-                                             {
-                                                 RectLeft = SelectionStartingPosition.X;
-                                                 RectTop = e.GetPosition(parent as Canvas).Y;
-
-                                                 selectionWidth = e.GetPosition(parent as Canvas).X -
-                                                                  SelectionStartingPosition.X;
-                                                 selectionHeight = SelectionStartingPosition.Y - RectTop;
-                                                     
-                                             }
-                                         }
-                                     }
-                                 }
-
-                                 SelectionRect = new Rect(RectLeft, RectTop, selectionWidth, selectionHeight);
-                             });
+            MouseMove = new RelayCommand<MouseEventArgs>(Selecting);
         }
 
+        private void Selecting(MouseEventArgs e)
+        {
+            if (!IsSelecting) return;
+            var parent = new DependencyObject();
+            if (e.Source is System.Windows.Shapes.Path)
+            {
+                parent = VisualTreeHelper.GetParent((System.Windows.Shapes.Path) e.Source);
+            }
+            else
+            {
+                parent = (Canvas) e.Source;
+            }
 
+            // From here and on the code is bad, I'll inhance it
+
+            double selectionWidth = 0;
+            double selectionHeight = 0;
+
+            double RectLeft = 0;
+            double RectTop = 0;
+
+            if ((e.GetPosition(parent as Canvas).X > SelectionStartingPosition.X) &&
+                (e.GetPosition(parent as Canvas).Y > SelectionStartingPosition.Y))
+            {
+                selectionWidth = e.GetPosition(parent as Canvas).X -
+                                 SelectionStartingPosition.X;
+                selectionHeight = e.GetPosition(parent as Canvas).Y -
+                                  SelectionStartingPosition.Y;
+                RectLeft = SelectionStartingPosition.X;
+                RectTop = SelectionStartingPosition.Y;
+            }
+            else
+            {
+                if ((e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X) &&
+                    (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y))
+                {
+                    RectLeft = e.GetPosition(parent as Canvas).X;
+                    RectTop = e.GetPosition(parent as Canvas).Y;
+
+                    selectionWidth = SelectionStartingPosition.X - RectLeft;
+                    selectionHeight = SelectionStartingPosition.Y - RectTop;
+                }
+                else
+                {
+                    if (e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X)
+                    {
+                        RectLeft = e.GetPosition(parent as Canvas).X;
+                        RectTop = SelectionStartingPosition.Y;
+
+                        selectionWidth = SelectionStartingPosition.X - RectLeft;
+                        selectionHeight = e.GetPosition(parent as Canvas).Y -
+                                          SelectionStartingPosition.Y;
+                    }
+                    else
+                    {
+                        if (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y)
+                        {
+                            RectLeft = SelectionStartingPosition.X;
+                            RectTop = e.GetPosition(parent as Canvas).Y;
+
+                            selectionWidth = e.GetPosition(parent as Canvas).X -
+                                             SelectionStartingPosition.X;
+                            selectionHeight = SelectionStartingPosition.Y - RectTop;
+                        }
+                    }
+                }
+            }
+
+            SelectionRect = new Rect(RectLeft, RectTop, selectionWidth, selectionHeight);
+        }
         private Bitmap CaptureSelection()
         {
             var screen = Screen.PrimaryScreen;
