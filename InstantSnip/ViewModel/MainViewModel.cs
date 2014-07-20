@@ -15,18 +15,6 @@ namespace InstantSnip.ViewModel
 
         #region Properties
 
-        public Visibility WindowVisibility
-        {
-            get
-            {
-                return _windowVisibility;
-            }
-            set
-            {
-                _windowVisibility = value;
-                RaisePropertyChanged("WindowVisibility");
-            }
-        }
         #endregion
 
         #region RelayCommands
@@ -85,14 +73,27 @@ namespace InstantSnip.ViewModel
 
         private void MessengerSubscriber()
         {
-            Messenger.Default.Register<Visibility>(this, visibility => WindowVisibility = visibility);
+            Messenger.Default.Register<Visibility>(this, visibility =>
+                                                         {
+                                                             if (visibility == Visibility.Collapsed)
+                                                             {
+                                                                 Application.Current.MainWindow.Hide();                                                                 
+                                                             }
+                                                             else
+                                                             {
+                                                                 if (visibility == Visibility.Visible)
+                                                                 {
+                                                                     Application.Current.MainWindow.Show();
+                                                                 }
+                                                             }
+                                                         });
         }
 
         #endregion
 
 
         #region Fields
-        private Visibility _windowVisibility;
+        
         #endregion
     }
 }

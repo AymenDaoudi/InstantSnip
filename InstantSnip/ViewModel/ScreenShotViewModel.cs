@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Point = System.Drawing.Point;
 
@@ -126,6 +127,7 @@ namespace InstantSnip.ViewModel
 
             MouseLeftButtonDown = new RelayCommand<MouseButtonEventArgs>((e) =>
                                                    {
+                                                       Messenger.Default.Send<Visibility>(Visibility.Collapsed);
                                                        IsSelecting = true;
                                                        var parent = new DependencyObject();
                                                        if (e.Source is System.Windows.Shapes.Path)
@@ -142,6 +144,7 @@ namespace InstantSnip.ViewModel
             MouseLeftButtonUp = new RelayCommand(() =>
                                                  {
                                                      IsSelecting = false;
+                                                     Messenger.Default.Send<Visibility>(Visibility.Visible);
                                                      CaptureSelection();
                                                  });
 
