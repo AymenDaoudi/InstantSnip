@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -12,6 +14,8 @@ using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using Point = System.Drawing.Point;
 
 namespace InstantSnip.ViewModel
 {
@@ -135,7 +139,11 @@ namespace InstantSnip.ViewModel
                                                        SelectionStartingPosition = new System.Windows.Point(e.GetPosition((Canvas)parent).X, e.GetPosition((Canvas)parent).Y);
                                                    });
 
-            MouseLeftButtonUp = new RelayCommand(()=>IsSelecting=false);
+            MouseLeftButtonUp = new RelayCommand(() =>
+                                                 {
+                                                     IsSelecting = false;
+                                                     CaptureSelection();
+                                                 });
 
             MouseMove = new RelayCommand<MouseEventArgs>((e) =>
                              {
@@ -211,6 +219,21 @@ namespace InstantSnip.ViewModel
         }
 
 
+        private Bitmap CaptureSelection()
+        {
+            var screen = Screen.PrimaryScreen;
+            var bitmap = new Bitmap((int)SelectionRect.Width -2, (int)SelectionRect.Height -2);
+
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.CopyFromScreen(new Point((int) SelectionRect.X, (int) SelectionRect.Y),
+                    new Point(0, 0), bitmap.Size);
+            }
+
+            bitmap.Save(@"C:\Users\Aymen\Desktop\test.png",ImageFormat.Png);
+            return bitmap;
+        }
+
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr obj);
 
@@ -232,6 +255,7 @@ namespace InstantSnip.ViewModel
             return bitmapSource;
         }
     
+
         #endregion
         
 
