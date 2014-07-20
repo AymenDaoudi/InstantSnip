@@ -25,6 +25,8 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("NewSnipIcon");
             }
         }
+
+        public ScreeShotView ScreenShotWindow { get; set; }
         #endregion
 
         #region RelayCommands
@@ -36,6 +38,12 @@ namespace InstantSnip.ViewModel
         }
 
         public RelayCommand StartSnipping
+        {
+            get;
+            private set;
+        }
+
+        public RelayCommand RestartSnipping
         {
             get;
             private set;
@@ -64,12 +72,27 @@ namespace InstantSnip.ViewModel
 
                                                  //bitmap.Save(@"C:/Users/Aymen/Desktop/test.png", ImageFormat.Png);
                                                                             
-                                                 var screenShotWindow = new ScreeShotView();
-                                                 screenShotWindow.Show();
+                                                 ScreenShotWindow = new ScreeShotView();
+                                                 ScreenShotWindow.Show();
                                                  Messenger.Default.Send(bitmap);
-
-                                                 Application.Current.MainWindow.Show();
                                              });
+
+            RestartSnipping = new RelayCommand(() =>
+            {
+                Application.Current.MainWindow.Hide();
+                ScreenShotWindow.Close();
+                
+                
+
+                var bitmap = CaptureScreen();
+
+                //bitmap.Save(@"C:/Users/Aymen/Desktop/test.png", ImageFormat.Png);
+
+                ScreenShotWindow = new ScreeShotView();
+                ScreenShotWindow.Show();
+                Messenger.Default.Send(bitmap);
+            });
+
         }
 
         private Bitmap CaptureScreen()
