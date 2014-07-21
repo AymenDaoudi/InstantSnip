@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
@@ -27,6 +28,17 @@ namespace InstantSnip.ViewModel
         }
 
         public ScreeShotView ScreenShotWindow { get; set; }
+
+        public WindowState WindowState
+        {
+            get { return _windowState; }
+            set
+            {
+                _windowState = value;
+                RaisePropertyChanged("WindowState");
+            }
+        }
+
         #endregion
 
         #region RelayCommands
@@ -68,7 +80,7 @@ namespace InstantSnip.ViewModel
             }
         }
 
-
+        public RelayCommand<System.Windows.Input.KeyEventArgs> KeyDown { get; private set; }
 
         #endregion
         
@@ -80,6 +92,7 @@ namespace InstantSnip.ViewModel
         }
 
         #region HelperMethods
+
         private void InitRelayCommands()
         {
             
@@ -87,7 +100,9 @@ namespace InstantSnip.ViewModel
             InitializeRestartSnippingRelayCommand();
             InitializeSaveSnipRelayCommand();
             InitializeCloseApplicationRelayCommand();
-            
+            InitiliazeKeyDownRelayCommand();
+
+
             MainAction = StartSnipping;
         }
 
@@ -128,6 +143,17 @@ namespace InstantSnip.ViewModel
 
                                             });
         }
+        private void InitiliazeKeyDownRelayCommand()
+        {
+            KeyDown = new RelayCommand<System.Windows.Input.KeyEventArgs>(keyEventArgs =>
+                                                     {
+                                                         if (keyEventArgs.Key == Key.Escape)
+                                                         {
+                                                              WindowState = WindowState.Minimized;
+                                                         }
+                                                     });
+        }
+
 
         private void MessengerSubscriber()
         {
@@ -170,7 +196,6 @@ namespace InstantSnip.ViewModel
 
         #endregion
 
-
         #region Fields
 
         private const string StartSnippingData = "M37.130002,45.231999L47.366002,45.231999 47.366002,47.789999 37.130002,47.789999z M16.656001,45.231999L26.893,45.231999 26.893,47.789999 16.656001,47.789999z M61.441411,37.940998L64.000001,37.940998 64.000001,47.789997 52.483998,47.789997 52.483998,45.231471 61.441411,45.231471z M2.581253,36.362995L2.5871734,45.320074 9.877011,45.314875 9.8790004,47.874795 0.029904366,47.879994 0.022000313,36.364296z M61.418999,20.240999L63.979001,20.240999 63.979001,30.476999 61.418999,30.476999z M0,18.572998L2.5589999,18.572998 2.5589999,28.809999 0,28.809999z M54.151101,0L64.000001,0.044281006 63.949898,11.559999 61.390702,11.548298 61.4297,2.591217 54.14,2.5600281z M37.963002,0L48.198998,0 48.198998,2.5599976 37.963002,2.5599976z M17.49,0L27.727,0 27.727,2.5599976 17.49,2.5599976z M0.044281006,0L11.56,0.050811768 11.548899,2.6095428 2.5919122,2.5704689 2.5592221,9.8610001 0,9.8492489z";
@@ -179,6 +204,7 @@ namespace InstantSnip.ViewModel
 
         private string _mainActionIcon;
         private RelayCommand _mainAction;
+        private WindowState _windowState;
 
         #endregion
     }

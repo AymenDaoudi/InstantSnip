@@ -72,6 +72,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\StringToPathConverter.cs" />
     <Compile Include="Helpers\SnippingState.cs" />
+    <Compile Include="Helpers\SystemTrayMinimization.cs" />
     <Compile Include="Model\DataItem.cs" />
     <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\IDataService.cs" />
@@ -127,7 +128,9 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\InstantSnip.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

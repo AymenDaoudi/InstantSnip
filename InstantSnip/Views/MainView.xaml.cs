@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using InstantSnip.Helpers;
 using InstantSnip.ViewModel;
 
 namespace InstantSnip
@@ -15,6 +16,7 @@ namespace InstantSnip
         {
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
+            SystemTrayMinimization.Enable(this);
         }
 
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
