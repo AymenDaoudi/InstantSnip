@@ -15,7 +15,9 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using InstantSnip.Helpers;
+using InstantSnip.Views;
 using Microsoft.Practices.ServiceLocation;
+using Application = System.Windows.Application;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Point = System.Drawing.Point;
 
@@ -102,21 +104,27 @@ namespace InstantSnip.ViewModel
             InitRelayCommands();
         }
 
-    
-
         #region HelperMethods
 
         private void MessengerSubscriber()
         {
             Messenger.Default.Register<Bitmap>(this, HandleScreenShotBitmap);
+            Messenger.Default.Register<SnippingState>(this, snippingState =>
+            {
+                switch (snippingState)
+                {
+                    case SnippingState.Saved:
+                        CaptureSelection();
+                        if (Application.Current.Windows[1] is ScreeShotView) Application.Current.Windows[1].Close();                            
+                        break;
+                }
+            });
         }
-
 
         private void HandleScreenShotBitmap(Bitmap source)
         {
             ScreenShotImageSource = LoadBitmap(source);
         }
-
 
         private void InitRelayCommands()
         {
@@ -146,7 +154,6 @@ namespace InstantSnip.ViewModel
                                                  {
                                                      IsSelecting = false;
                                                      Messenger.Default.Send<SnippingState>(SnippingState.SelectionFinished);
-                                                     CaptureSelection();
                                                  });
 
             MouseMove = new RelayCommand<MouseEventArgs>(Selecting);
