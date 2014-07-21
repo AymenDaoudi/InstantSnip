@@ -31,7 +31,7 @@
                     Width="80" Height="80"
                     Command="{Binding MainAction}">
                 <Grid Margin="0">
-                    <Path Data="{Binding NewSnipIcon, Converter={StaticResource StringToPathConverter}}" 
+                    <Path Data="{Binding MainActionIcon, Converter={StaticResource StringToPathConverter}}" 
 						Stretch="Fill" Fill="#FFFFFFFF" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5" Width="40" Height="40">
                         <Path.RenderTransform>
                             <TransformGroup>

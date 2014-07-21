@@ -228,7 +228,6 @@ namespace InstantSnip.ViewModel
 
         private Bitmap CaptureSnipping()
         {
-            var screen = Screen.PrimaryScreen;
             var bitmap = new Bitmap((int)SelectionRect.Width -2, (int)SelectionRect.Height -2);
 
             using (var graphics = Graphics.FromImage(bitmap))
