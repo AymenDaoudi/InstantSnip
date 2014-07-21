@@ -38,7 +38,6 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("ScreenShotImageSource");
             }
         }
-
         public Rect BackRect
         {
             get { return _backRect; }
@@ -48,7 +47,6 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("BackRect");
             }
         }
-
         public Rect SelectionRect
         {
             get { return _selectionRect; }
@@ -58,7 +56,6 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("SelectionRect");
             }
         }
-
         public double WindowWidth
         {
             get { return _windowWidth; }
@@ -68,7 +65,6 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("WindowWidth");
             }
         }
-
         public double WindowHeight
         {
             get { return _windowHeight; }
@@ -92,41 +88,41 @@ namespace InstantSnip.ViewModel
         public RelayCommand<MouseButtonEventArgs> MouseLeftButtonDown { get; set; }
         public RelayCommand MouseLeftButtonUp { get; set; }
         public RelayCommand<MouseEventArgs> MouseMove { get; set; }
-
-
         
         #endregion
 
 
         public ScreenShotViewModel()
         {
-            MessengerSubscriber();
-            InitRelayCommands();
+            RegisterMessages();
+            IniializetRelayCommands();
         }
 
         #region HelperMethods
 
-        private void MessengerSubscriber()
+        private void RegisterMessages()
         {
-            Messenger.Default.Register<Bitmap>(this, HandleScreenShotBitmap);
-            Messenger.Default.Register<SnippingState>(this, snippingState =>
-            {
-                switch (snippingState)
-                {
-                    case SnippingState.Saved:
-                        CaptureSelection();
-                        if (Application.Current.Windows[1] is ScreeShotView) Application.Current.Windows[1].Close();                            
-                        break;
-                }
-            });
+            Messenger.Default.Register<Bitmap>(this, ReceiveScreenShotBitmapMessage);
+            Messenger.Default.Register<SnippingState>(this, ReceiveSnippingStateMessage);
         }
 
-        private void HandleScreenShotBitmap(Bitmap source)
+        private void ReceiveScreenShotBitmapMessage(Bitmap source)
         {
-            ScreenShotImageSource = LoadBitmap(source);
+            ScreenShotImageSource = GetBitmapSource(source);
         }
 
-        private void InitRelayCommands()
+        private void ReceiveSnippingStateMessage(SnippingState state)
+        {
+             switch (state)
+             {
+                 case SnippingState.Saved:
+                     CaptureSnipping();
+                     if (Application.Current.Windows[1] is ScreeShotView) Application.Current.Windows[1].Close();                            
+                     break;
+             }
+        }
+
+        private void IniializetRelayCommands()
         {
             WindowLoaded = new RelayCommand(() =>
             {
@@ -156,10 +152,10 @@ namespace InstantSnip.ViewModel
                                                      Messenger.Default.Send<SnippingState>(SnippingState.SelectionFinished);
                                                  });
 
-            MouseMove = new RelayCommand<MouseEventArgs>(Selecting);
+            MouseMove = new RelayCommand<MouseEventArgs>(PerformSnipping);
         }
 
-        private void Selecting(MouseEventArgs e)
+        private void PerformSnipping(MouseEventArgs e)
         {
             if (!IsSelecting) return;
             var parent = new DependencyObject();
@@ -229,7 +225,8 @@ namespace InstantSnip.ViewModel
 
             SelectionRect = new Rect(RectLeft, RectTop, selectionWidth, selectionHeight);
         }
-        private Bitmap CaptureSelection()
+
+        private Bitmap CaptureSnipping()
         {
             var screen = Screen.PrimaryScreen;
             var bitmap = new Bitmap((int)SelectionRect.Width -2, (int)SelectionRect.Height -2);
@@ -247,7 +244,7 @@ namespace InstantSnip.ViewModel
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr obj);
 
-        public static BitmapSource LoadBitmap(Bitmap source)
+        public static BitmapSource GetBitmapSource(Bitmap source)
         {
             IntPtr ip = source.GetHbitmap();
             BitmapSource bitmapSource = null;
@@ -261,7 +258,6 @@ namespace InstantSnip.ViewModel
             {
                 DeleteObject(ip);
             }
-
             return bitmapSource;
         }
     
@@ -276,7 +272,6 @@ namespace InstantSnip.ViewModel
             private Rect _selectionRect;
             private double _windowWidth;
             private double _windowHeight;
-
         #endregion
     }
 }
