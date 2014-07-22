@@ -31,6 +31,7 @@ namespace InstantSnip.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ScreenShotViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
         }
 
         /// <summary>
@@ -52,6 +53,14 @@ namespace InstantSnip.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<ScreenShotViewModel>();
+            }
+        }
+
+        public SettingsViewModel SettingsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SettingsViewModel>();
             }
         }
 

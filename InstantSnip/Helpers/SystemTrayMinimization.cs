@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using Application = System.Windows.Application;
 
 namespace InstantSnip.Helpers
 {
@@ -23,10 +24,6 @@ namespace InstantSnip.Helpers
 
         private class SystemTrayMinimizationInstance
         {
-            private readonly Window _window;
-            private NotifyIcon _notifyIcon;
-            private bool _balloonShown;
-
             public SystemTrayMinimizationInstance(Window window)
             {
                 _window = window;
@@ -35,16 +32,8 @@ namespace InstantSnip.Helpers
 
             private void HandleStateChanged(object sender, EventArgs e)
             {
-                if (_notifyIcon == null)
-                {
-
-                    _notifyIcon = new NotifyIcon() { Icon = GetApplicationIcon() };
-                    _notifyIcon.MouseClick += new MouseEventHandler(HandleNotifyIconOrBalloonClicked);
-                    _notifyIcon.BalloonTipClicked += new EventHandler(HandleNotifyIconOrBalloonClicked);
-                }
+                if (_notifyIcon == null) _notifyIcon = SetNotificationIcon();
                 
-                _notifyIcon.Text = _window.Title;
-
                 var minimized = (_window.WindowState == WindowState.Minimized);
                 _window.ShowInTaskbar = !minimized;
                 _notifyIcon.Visible = minimized;
@@ -53,6 +42,45 @@ namespace InstantSnip.Helpers
 
                 _notifyIcon.ShowBalloonTip(1000, null, _window.Title, ToolTipIcon.None);
                 _balloonShown = true;
+            }
+
+            private NotifyIcon SetNotificationIcon()
+            {
+                var notifyIcon = new NotifyIcon()
+                                 {
+                                     Icon = GetApplicationIcon(),
+                                     Text = _window.Title
+                                 };
+                notifyIcon.MouseClick += new MouseEventHandler(HandleNotifyIconOrBalloonClicked);
+                notifyIcon.BalloonTipClicked += new EventHandler(HandleNotifyIconOrBalloonClicked);
+                notifyIcon.ContextMenu = SetContextMenu();
+                return notifyIcon;
+            }
+
+            private ContextMenu SetContextMenu()
+            {
+                var openMenuItem = new MenuItem()
+                                   {
+                                       Index = 0,
+                                       Text = "Open"
+                                   };
+                openMenuItem.Click += new EventHandler(HandleNotifyIconOrBalloonClicked);
+                var settingsMenuItem = new MenuItem()
+                                       {
+                                           Index = 1,
+                                           Text = "Settings"
+                                       };
+                settingsMenuItem.Click += new EventHandler(HandleNotifyIconOrBalloonClicked);
+                var exitMenuItem = new MenuItem()
+                                   {
+                                       Index = 1,
+                                       Text = "Settings"
+                                   };
+                exitMenuItem.Click += (o, args) => Application.Current.Shutdown();
+
+                var contextMenu = new ContextMenu();
+                contextMenu.MenuItems.AddRange(new MenuItem[] {openMenuItem, settingsMenuItem, exitMenuItem});
+                return contextMenu;
             }
 
             private Icon GetApplicationIcon()
@@ -76,9 +104,15 @@ namespace InstantSnip.Helpers
 
             private void HandleNotifyIconOrBalloonClicked(object sender, EventArgs e)
             {
-                // Restore the Window
                 _window.WindowState = WindowState.Normal;
             }
+
+            #region Fields
+            private readonly Window _window;
+            private NotifyIcon _notifyIcon;
+            private bool _balloonShown;
+            #endregion
+
 
         }
     }
