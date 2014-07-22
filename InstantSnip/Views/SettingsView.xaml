@@ -1,0 +1,45 @@
+﻿<Window x:Class="InstantSnip.Views.SettingsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ignore="http://www.ignore.com"
+        mc:Ignorable="d ignore"
+        DataContext="{Binding SettingsViewModel, Source={StaticResource Locator}}" Width="500" Height="200" Icon="/InstantSnip;component/Images/InstantSnip.png" ResizeMode="NoResize" ShowInTaskbar="False" Title="InstantSnip settings" Topmost="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="1" Content="Snip name" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        <Label Grid.Row="2" Content="Snip Location" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        <Label Grid.Row="3" Content="Overwrite existing snip ?" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0,0,0"/>
+        <Label Grid.Row="4" Content="Delete picture after snipping ?" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+
+        <TextBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Text="TextBox" Margin="10,1" VerticalContentAlignment="Center"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="10,1">
+            <TextBox HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="TextBox" Margin="0" Width="252" VerticalContentAlignment="Center"/>
+            <Button Content="Button" HorizontalAlignment="Stretch" Margin="2,0,0,0" />
+        </StackPanel>
+
+        <CheckBox Grid.Row="3" Grid.Column="1" Content="(If not, duplicates will be created)" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0"/>
+
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="10,0">
+            <CheckBox Content="" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+            <TextBox HorizontalAlignment="Stretch" Text="TextBox" BorderThickness="1" Margin="0,1" Width="100" AllowDrop="False" VerticalContentAlignment="Center"/>
+            <Label Content="Secconds" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
