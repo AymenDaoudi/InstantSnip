@@ -82,5 +82,29 @@ namespace InstantSnip.Properties {
                 this["TimeBeforeDeletingPicture"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsCopyImageToClipBoard {
+            get {
+                return ((bool)(this["IsCopyImageToClipBoard"]));
+            }
+            set {
+                this["IsCopyImageToClipBoard"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsCopyUriToClipboard {
+            get {
+                return ((bool)(this["IsCopyUriToClipboard"]));
+            }
+            set {
+                this["IsCopyUriToClipboard"] = value;
+            }
+        }
     }
 }

@@ -144,7 +144,17 @@ namespace InstantSnip.ViewModel
             }
             snip.Save(fileName, ImageFormat.Png);
             Thread.Sleep(600);
-            Clipboard.SetImage(GetBitmapSource(snip));
+            if (Settings.Default.IsCopyImageToClipBoard)
+            {
+                Clipboard.SetImage(GetBitmapSource(snip));   
+            }
+            else
+            {
+                if (Settings.Default.IsCopyUriToClipboard)
+                {
+                    Clipboard.SetText(fileName);   
+                }
+            }
             Application.Current.Windows.OfType<MainView>().First().WindowState= WindowState.Minimized;
         }
 
@@ -286,8 +296,6 @@ namespace InstantSnip.ViewModel
     
 
         #endregion
-        
-
 
         #region Fields
             private ImageSource _screenShotImageSource;
