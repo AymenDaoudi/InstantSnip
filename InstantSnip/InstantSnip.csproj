@@ -71,6 +71,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\StringToPathConverter.cs" />
+    <Compile Include="Helpers\ScreenCapture.cs" />
     <Compile Include="Helpers\SnippingState.cs" />
     <Compile Include="Helpers\SystemTrayMinimization.cs" />
     <Compile Include="Model\DataItem.cs" />

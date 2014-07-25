@@ -119,7 +119,7 @@ namespace InstantSnip.ViewModel
              switch (state)
              {
                  case SnippingState.Saved:
-                     
+                     Application.Current.MainWindow.Hide();
                      SaveSnipping();
                      Application.Current.Windows.OfType<ScreeShotView>().First().Close();
                      break;
