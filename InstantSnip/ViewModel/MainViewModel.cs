@@ -109,8 +109,7 @@ namespace InstantSnip.ViewModel
         private void InitializeCloseApplicationRelayCommand()
         {
             CloseApplication = new RelayCommand(() => Application.Current.Shutdown());
-        }
-        
+        }        
         private void InitializeStartSnippingRelayCommand()
         {
             StartSnipping = new RelayCommand(() =>
@@ -124,7 +123,6 @@ namespace InstantSnip.ViewModel
                                                  Messenger.Default.Send(bitmap);
                                              });
         }
-
         private void InitializeRestartSnippingRelayCommand()
         {
             RestartSnipping = new RelayCommand(() =>
@@ -133,7 +131,6 @@ namespace InstantSnip.ViewModel
                 SetMainAction(StartSnipping, StartSnippingData);
             });
         }
-        
         private void InitializeSaveSnipRelayCommand()
         {
             SaveSnipping = new RelayCommand(() =>

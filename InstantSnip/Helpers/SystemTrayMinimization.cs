@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using InstantSnip.Views;
 using Application = System.Windows.Application;
 
 namespace InstantSnip.Helpers
@@ -27,21 +22,18 @@ namespace InstantSnip.Helpers
             public SystemTrayMinimizationInstance(Window window)
             {
                 _window = window;
+                if (_notifyIcon == null) _notifyIcon = SetNotificationIcon();
+                _notifyIcon.Visible = true;
+                _notifyIcon.ShowBalloonTip(1000, null, _window.Title, ToolTipIcon.None);
+                _balloonShown = true;
                 _window.StateChanged += new EventHandler(HandleStateChanged);
             }
 
             private void HandleStateChanged(object sender, EventArgs e)
             {
-                if (_notifyIcon == null) _notifyIcon = SetNotificationIcon();
                 
                 var minimized = (_window.WindowState == WindowState.Minimized);
                 _window.ShowInTaskbar = !minimized;
-                _notifyIcon.Visible = minimized;
-                
-                if (!minimized || _balloonShown) return;
-
-                _notifyIcon.ShowBalloonTip(1000, null, _window.Title, ToolTipIcon.None);
-                _balloonShown = true;
             }
 
             private NotifyIcon SetNotificationIcon()
@@ -70,11 +62,17 @@ namespace InstantSnip.Helpers
                                            Index = 1,
                                            Text = "Settings"
                                        };
-                settingsMenuItem.Click += new EventHandler(HandleNotifyIconOrBalloonClicked);
+                
+                settingsMenuItem.Click += (o, args) =>
+                                          {
+                                              var settingsView = new SettingsView();
+                                              settingsView.Show();
+                                          };
+
                 var exitMenuItem = new MenuItem()
                                    {
                                        Index = 1,
-                                       Text = "Settings"
+                                       Text = "Exit"
                                    };
                 exitMenuItem.Click += (o, args) => Application.Current.Shutdown();
 

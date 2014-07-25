@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -15,10 +16,12 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using InstantSnip.Helpers;
+using InstantSnip.Properties;
 using InstantSnip.Views;
-using Microsoft.Practices.ServiceLocation;
+using Microsoft.Win32;
 using Application = System.Windows.Application;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Point = System.Drawing.Point;
 
 namespace InstantSnip.ViewModel
@@ -116,10 +119,33 @@ namespace InstantSnip.ViewModel
              switch (state)
              {
                  case SnippingState.Saved:
-                     CaptureSnipping();
-                     if (Application.Current.Windows[1] is ScreeShotView) Application.Current.Windows[1].Close();                            
+                     
+                     SaveSnipping();
+                     Application.Current.Windows.OfType<ScreeShotView>().First().Close();
                      break;
              }
+        }
+
+        private void SaveSnipping()
+        {
+            var snip = CaptureSnipping();
+            var snipLocation = Settings.Default.SnipLocation;
+            var snipName = Settings.Default.SnipName;
+            var fileName = snipLocation + "\\" + snipName + ".png";
+            if (!Settings.Default.AllowSnipOverwriting)
+            {
+                var counter = 0;
+                do
+                {
+                    var date = DateTime.Now.ToString("yyyy-MM-dd");
+                    snipName = Settings.Default.SnipName + "_" + date + "_" + ++counter;
+                    fileName = snipLocation + "\\" + snipName + ".png";
+                } while (Directory.GetFiles(snipLocation).Count(name => name == fileName) != 0);
+            }
+            snip.Save(fileName, ImageFormat.Png);
+            Thread.Sleep(600);
+            Clipboard.SetImage(GetBitmapSource(snip));
+            Application.Current.Windows.OfType<MainView>().First().WindowState= WindowState.Minimized;
         }
 
         private void IniializetRelayCommands()
@@ -235,8 +261,6 @@ namespace InstantSnip.ViewModel
                 graphics.CopyFromScreen(new Point((int) SelectionRect.X, (int) SelectionRect.Y),
                     new Point(0, 0), bitmap.Size);
             }
-
-            bitmap.Save(@"C:\Users\Aymen\Desktop\test.png",ImageFormat.Png);
             return bitmap;
         }
 
