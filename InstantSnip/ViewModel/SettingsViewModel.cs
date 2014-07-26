@@ -88,7 +88,6 @@ namespace InstantSnip.ViewModel
 
         #endregion
 
-
         #region RelayCommands
 
         public RelayCommand WindowLoaded { get; set; }

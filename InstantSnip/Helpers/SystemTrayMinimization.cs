@@ -102,7 +102,15 @@ namespace InstantSnip.Helpers
 
             private void HandleNotifyIconOrBalloonClicked(object sender, EventArgs e)
             {
-                _window.WindowState = WindowState.Normal;
+                switch (_window.WindowState)
+                {
+                    case WindowState.Normal:
+                        _window.WindowState = WindowState.Minimized;
+                        break;
+                    case WindowState.Minimized:
+                        _window.WindowState = WindowState.Normal;
+                        break;
+                }
             }
 
             #region Fields
