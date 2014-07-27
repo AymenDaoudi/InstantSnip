@@ -23,27 +23,22 @@ namespace InstantSnip.Helpers
             {
                 _window = window;
                 if (_notifyIcon == null) _notifyIcon = SetNotificationIcon();
-                _notifyIcon.Visible = true;
-                _notifyIcon.ShowBalloonTip(1000, null, _window.Title, ToolTipIcon.None);
                 _balloonShown = true;
                 _window.StateChanged += new EventHandler(HandleStateChanged);
             }
 
-            private void HandleStateChanged(object sender, EventArgs e)
-            {
-                
-                var minimized = (_window.WindowState == WindowState.Minimized);
-                _window.ShowInTaskbar = !minimized;
-            }
+            #region Methods
 
             private NotifyIcon SetNotificationIcon()
             {
                 var notifyIcon = new NotifyIcon()
-                                 {
-                                     Icon = GetApplicationIcon(),
-                                     Text = _window.Title
-                                 };
-                notifyIcon.MouseClick += new MouseEventHandler(HandleNotifyIconOrBalloonClicked);
+                {
+                    Icon = GetApplicationIcon(),
+                    Text = _window.Title,
+                    Visible = true
+                };
+                notifyIcon.ShowBalloonTip(600, null, _window.Title, ToolTipIcon.None);
+                notifyIcon.DoubleClick += new EventHandler(HandleNotifyIconOrBalloonClicked);
                 notifyIcon.BalloonTipClicked += new EventHandler(HandleNotifyIconOrBalloonClicked);
                 notifyIcon.ContextMenu = SetContextMenu();
                 return notifyIcon;
@@ -51,34 +46,20 @@ namespace InstantSnip.Helpers
 
             private ContextMenu SetContextMenu()
             {
-                var openMenuItem = new MenuItem()
-                                   {
-                                       Index = 0,
-                                       Text = "Open"
-                                   };
+                var openMenuItem = new MenuItem() { Index = 0, Text = "Open" };
                 openMenuItem.Click += new EventHandler(HandleNotifyIconOrBalloonClicked);
-                var settingsMenuItem = new MenuItem()
-                                       {
-                                           Index = 1,
-                                           Text = "Settings"
-                                       };
-                
-                settingsMenuItem.Click += (o, args) =>
-                                          {
-                                              var settingsView = new SettingsView();
-                                              settingsView.Show();
-                                          };
 
-                var exitMenuItem = new MenuItem()
-                                   {
-                                       Index = 1,
-                                       Text = "Exit"
-                                   };
+                var settingsMenuItem = new MenuItem() { Index = 1, Text = "Settings" };
+                settingsMenuItem.Click += (o, args) =>
+                {
+                    var settingsView = new SettingsView();
+                    settingsView.Show();
+                };
+
+                var exitMenuItem = new MenuItem() { Index = 1, Text = "Exit" };
                 exitMenuItem.Click += (o, args) => Application.Current.Shutdown();
 
-                var contextMenu = new ContextMenu();
-                contextMenu.MenuItems.AddRange(new MenuItem[] {openMenuItem, settingsMenuItem, exitMenuItem});
-                return contextMenu;
+                return new ContextMenu(new MenuItem[] { openMenuItem, settingsMenuItem, exitMenuItem });
             }
 
             private Icon GetApplicationIcon()
@@ -88,37 +69,48 @@ namespace InstantSnip.Helpers
                 var applicationPath = Assembly.GetExecutingAssembly().Location;
                 var directoryPath = Path.GetDirectoryName(applicationPath);
                 var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create((BitmapSource) _window.Icon));
+                encoder.Frames.Add(BitmapFrame.Create((BitmapSource)_window.Icon));
 
                 using (var stream = new MemoryStream())
                 {
                     encoder.Save(stream);
                     stream.Position = 0; // rewind the stream
-                    var bitmap = (Bitmap) Image.FromStream(stream);
+                    var bitmap = (Bitmap)Image.FromStream(stream);
                     applicationIcon = Icon.FromHandle(bitmap.GetHicon());
                 }
                 return applicationIcon;
             }
 
-            private void HandleNotifyIconOrBalloonClicked(object sender, EventArgs e)
-            {
-                switch (_window.WindowState)
+            #endregion
+
+            #region Events
+                private void HandleStateChanged(object sender, EventArgs e)
                 {
-                    case WindowState.Normal:
-                        _window.WindowState = WindowState.Minimized;
-                        break;
-                    case WindowState.Minimized:
-                        _window.WindowState = WindowState.Normal;
-                        break;
+
+                    var minimized = (_window.WindowState == WindowState.Minimized);
+                    _window.ShowInTaskbar = !minimized;
                 }
-            }
+
+                private void HandleNotifyIconOrBalloonClicked(object sender, EventArgs e)
+                {
+                    switch (_window.WindowState)
+                    {
+                        case WindowState.Normal:
+                            _window.WindowState = WindowState.Minimized;
+                            break;
+                        case WindowState.Minimized:
+                            _window.WindowState = WindowState.Normal;
+                            break;
+                    }
+                }
+
+            #endregion
 
             #region Fields
             private readonly Window _window;
             private NotifyIcon _notifyIcon;
             private bool _balloonShown;
             #endregion
-
 
         }
     }
