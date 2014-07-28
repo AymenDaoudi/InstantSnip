@@ -114,10 +114,8 @@ namespace InstantSnip.ViewModel
         {
             StartSnipping = new RelayCommand(() =>
                                              {
-                                                 Application.Current.MainWindow.Hide();
-
+                                                 ViewsAccessibility.GetCorresponingWindow(this).Hide();
                                                  var bitmap = CaptureSnipping();
-
                                                  ScreenShotWindow = new ScreeShotView();
                                                  ScreenShotWindow.Show();
                                                  Messenger.Default.Send(bitmap);
@@ -159,14 +157,14 @@ namespace InstantSnip.ViewModel
                                                              switch (snippingState)
                                                              {
                                                                  case SnippingState.Begin:
-                                                                     Application.Current.MainWindow.Show();
+                                                                     ViewsAccessibility.GetCorresponingWindow(this).Show();
                                                                      SetMainAction(StartSnipping, StartSnippingData);
                                                                      break;
                                                                  case SnippingState.SelectionStarted:
-                                                                     Application.Current.MainWindow.Hide();
+                                                                     ViewsAccessibility.GetCorresponingWindow(this).Hide();
                                                                      break;
                                                                  case SnippingState.SelectionFinished:
-                                                                     Application.Current.MainWindow.Show();
+                                                                     ViewsAccessibility.GetCorresponingWindow(this).Show();
                                                                      SetMainAction(SaveSnipping, SaveSnippingData);
                                                                      break;
                                                              }

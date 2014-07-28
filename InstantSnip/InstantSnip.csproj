@@ -73,6 +73,7 @@
     <Compile Include="Converters\StringToPathConverter.cs" />
     <Compile Include="Helpers\SnippingState.cs" />
     <Compile Include="Helpers\SystemTrayMinimization.cs" />
+    <Compile Include="Helpers\ViewsAccessibility.cs" />
     <Compile Include="Model\DataItem.cs" />
     <Compile Include="Model\DataService.cs" />
     <Compile Include="Model\IDataService.cs" />

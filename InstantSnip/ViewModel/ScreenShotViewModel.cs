@@ -17,11 +17,8 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using InstantSnip.Helpers;
 using InstantSnip.Properties;
-using InstantSnip.Views;
-using Microsoft.Win32;
-using Application = System.Windows.Application;
+using Microsoft.Practices.ServiceLocation;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using Point = System.Drawing.Point;
 
 namespace InstantSnip.ViewModel
@@ -94,7 +91,6 @@ namespace InstantSnip.ViewModel
         
         #endregion
 
-
         public ScreenShotViewModel()
         {
             RegisterMessages();
@@ -119,9 +115,9 @@ namespace InstantSnip.ViewModel
              switch (state)
              {
                  case SnippingState.Saved:
-                     Application.Current.MainWindow.Hide();
+                     ViewsAccessibility.GetCorresponingWindow(ServiceLocator.Current.GetInstance<MainViewModel>()).Hide();
                      SaveSnipping();
-                     Application.Current.Windows.OfType<ScreeShotView>().First().Close();
+                     ViewsAccessibility.GetCorresponingWindow(this).Close();
                      break;
              }
         }
@@ -155,7 +151,7 @@ namespace InstantSnip.ViewModel
                     Clipboard.SetText(fileName);   
                 }
             }
-            Application.Current.Windows.OfType<MainView>().First().WindowState= WindowState.Minimized;
+            ViewsAccessibility.GetCorresponingWindow(ServiceLocator.Current.GetInstance<MainViewModel>()).WindowState= WindowState.Minimized;
         }
 
         private void IniializetRelayCommands()

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using InstantSnip.Helpers;
 using InstantSnip.Properties;
 using InstantSnip.Views;
 using Application = System.Windows.Application;
@@ -132,11 +133,7 @@ namespace InstantSnip.ViewModel
                                                 Settings.Default.AllowSnipOverwriting = AllowSnipOverwriting;
                                                 Settings.Default.IsCopyImageToClipBoard = IsCopyImageToClipBoard;
                                                 Settings.Default.IsCopyUriToClipboard = IsCopyURIToClipboard;
-                                                foreach (var window in Application.Current.Windows.OfType<SettingsView>())
-                                                {
-                                                    window.Close();
-                                                    break;
-                                                }
+                                                ViewsAccessibility.GetCorresponingWindow(this).Close();
                                             });
 
             CancelSettings = new RelayCommand(() =>
@@ -148,11 +145,7 @@ namespace InstantSnip.ViewModel
                                                 AllowSnipOverwriting = Settings.Default.AllowSnipOverwriting ;
                                                 IsCopyImageToClipBoard = Settings.Default.IsCopyImageToClipBoard;
                                                 IsCopyURIToClipboard = Settings.Default.IsCopyUriToClipboard;
-                                                foreach (var window in Application.Current.Windows.OfType<SettingsView>())
-                                                {
-                                                    window.Close();
-                                                    break;
-                                                }
+                                                ViewsAccessibility.GetCorresponingWindow(this).Close();
                                             });
         }
 
