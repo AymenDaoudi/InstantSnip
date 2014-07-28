@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Windows;
-using System.Windows.Navigation;
 using GalaSoft.MvvmLight.Threading;
+using InstantSnip.Helpers;
 using InstantSnip.Properties;
 
 namespace InstantSnip
@@ -19,6 +18,7 @@ namespace InstantSnip
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+            WpfSingleInstance.Make();
             Settings.Default.SnipLocation = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         }
     }

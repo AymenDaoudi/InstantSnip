@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              StartupUri="Views\MainView.xaml"
              Startup="App_OnStartup"
+             
              mc:Ignorable="d" ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>
