@@ -1,1 +1,2 @@
-![alt tag](https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/InstantSnip/Images/InstantSnip.png)
+![Logo of InstantSnip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ReadMeLogo.png)
+ 
