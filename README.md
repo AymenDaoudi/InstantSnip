@@ -1,3 +1,5 @@
+# InstantSnip
+
 InstantSnip is a simple, lightweight and practicle windows tool to take screenshots and snips.
 
 ## Why InstantSnip
