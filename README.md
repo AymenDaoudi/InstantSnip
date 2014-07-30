@@ -12,7 +12,6 @@ InstantSnip can be a good alternative, this screenshot tool :
 - Easy and simple, doesn't take much of your screen.
 - Don't need to close it and open it everytime, it gets minimized to the system tray notification center
 - Helps managing the taken captures, by deleting them automatically after a given time.
-![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/MakeSelection.png)
 
 ## Using InstantSnip
 
@@ -27,6 +26,8 @@ Click on the left button to start snipping
 ### 2. Select area
 
 Drag the mouse all by clicking  on the mouse left button to select the area you want to capture from the screen.
+
+![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/MakeSelection.png)
 
 ### 3. Save
 
