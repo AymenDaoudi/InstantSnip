@@ -125,28 +125,28 @@ namespace InstantSnip.ViewModel
         private void SaveSnipping()
         {
             var snip = CaptureSnipping();
-            var snipLocation = Settings.Default.SnipLocation;
-            var snipName = Settings.Default.SnipName;
+            var snipLocation = (String)Application.Current.Properties["SnipLocation"];
+            var snipName = (String)Application.Current.Properties["SnipName"];
             var fileName = snipLocation + "\\" + snipName + ".png";
-            if (!Settings.Default.AllowSnipOverwriting)
+            if (!(bool) Application.Current.Properties["AllowSnipOverwriting"])
             {
                 var counter = 0;
                 do
                 {
                     var date = DateTime.Now.ToString("yyyy-MM-dd");
-                    snipName = Settings.Default.SnipName + "_" + date + "_" + ++counter;
+                    snipName = (String)Application.Current.Properties["SnipName"] +"_" + date + "_" + ++counter;
                     fileName = snipLocation + "\\" + snipName + ".png";
                 } while (Directory.GetFiles(snipLocation).Count(name => name == fileName) != 0);
             }
             snip.Save(fileName, ImageFormat.Png);
             Thread.Sleep(600);
-            if (Settings.Default.IsCopyImageToClipBoard)
+            if ((bool) Application.Current.Properties["IsCopyImageToClipBoard"])
             {
                 Clipboard.SetImage(GetBitmapSource(snip));   
             }
             else
             {
-                if (Settings.Default.IsCopyUriToClipboard)
+                if ((bool)Application.Current.Properties["IsCopyUriToClipboard"])
                 {
                     Clipboard.SetText(fileName);   
                 }

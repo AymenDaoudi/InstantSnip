@@ -103,18 +103,10 @@ namespace InstantSnip.ViewModel
             InitializeRelayCommands();
         }
 
-        private void InitializeRelayCommands()
+        #region HelperMethods
+            private void InitializeRelayCommands()
         {
-            WindowLoaded = new RelayCommand(() =>
-                                            {
-                                                SnipName = Settings.Default.SnipName;
-                                                SnipLocation = Settings.Default.SnipLocation;
-                                                AllowSnipOverwriting = Settings.Default.AllowSnipOverwriting;
-                                                AllowDeletingPictureAfterSnipping = Settings.Default.AllowDeletingPictureAfterSnipping;
-                                                TimeBeforeDeletingPicture = Settings.Default.TimeBeforeDeletingPicture;
-                                                IsCopyImageToClipBoard = Settings.Default.IsCopyImageToClipBoard;
-                                                IsCopyURIToClipboard = Settings.Default.IsCopyUriToClipboard;
-                                            });
+            WindowLoaded = new RelayCommand(LoadProperties);
 
             ChangeLocation = new RelayCommand(() =>
                                               {
@@ -125,29 +117,36 @@ namespace InstantSnip.ViewModel
 
             SaveSettings = new RelayCommand(() =>
                                             {
-                                                Settings.Default.TimeBeforeDeletingPicture = TimeBeforeDeletingPicture;
-                                                Settings.Default.SnipName = SnipName;
-                                                Settings.Default.SnipLocation = SnipLocation;
-                                                Settings.Default.AllowDeletingPictureAfterSnipping =
-                                                    AllowDeletingPictureAfterSnipping;
-                                                Settings.Default.AllowSnipOverwriting = AllowSnipOverwriting;
-                                                Settings.Default.IsCopyImageToClipBoard = IsCopyImageToClipBoard;
-                                                Settings.Default.IsCopyUriToClipboard = IsCopyURIToClipboard;
+                                                Application.Current.Properties.Add("SnipName", SnipName);
+                                                Application.Current.Properties.Add("SnipLocation", SnipLocation);
+                                                Application.Current.Properties.Add("AllowSnipOverwriting", AllowSnipOverwriting);
+                                                Application.Current.Properties.Add("AllowDeletingPictureAfterSnipping", AllowDeletingPictureAfterSnipping);
+                                                Application.Current.Properties.Add("TimeBeforeDeletingPicture", TimeBeforeDeletingPicture);
+                                                Application.Current.Properties.Add("IsCopyImageToClipBoard", IsCopyImageToClipBoard);
+                                                Application.Current.Properties.Add("IsCopyUriToClipboard", IsCopyURIToClipboard);
+
                                                 ViewsAccessibility.GetCorresponingWindow(this).Close();
                                             });
 
             CancelSettings = new RelayCommand(() =>
-                                            {
-                                                TimeBeforeDeletingPicture = Settings.Default.TimeBeforeDeletingPicture;
-                                                SnipName = Settings.Default.SnipName;
-                                                SnipLocation = Settings.Default.SnipLocation;
-                                                AllowDeletingPictureAfterSnipping = Settings.Default.AllowDeletingPictureAfterSnipping ;
-                                                AllowSnipOverwriting = Settings.Default.AllowSnipOverwriting ;
-                                                IsCopyImageToClipBoard = Settings.Default.IsCopyImageToClipBoard;
-                                                IsCopyURIToClipboard = Settings.Default.IsCopyUriToClipboard;
-                                                ViewsAccessibility.GetCorresponingWindow(this).Close();
+                                              {
+                                                  LoadProperties();
+                                                  ViewsAccessibility.GetCorresponingWindow(this).Close();
                                             });
         }
+
+            private void LoadProperties()
+        {
+            SnipName = (String) Application.Current.Properties["SnipName"];
+            SnipLocation = (String) Application.Current.Properties["SnipLocation"];
+            AllowSnipOverwriting = (bool) Application.Current.Properties["AllowSnipOverwriting"];
+            AllowDeletingPictureAfterSnipping = (bool) Application.Current.Properties["AllowDeletingPictureAfterSnipping"];
+            TimeBeforeDeletingPicture = (TimeSpan) Application.Current.Properties["TimeBeforeDeletingPicture"];
+            IsCopyImageToClipBoard = (bool) Application.Current.Properties["IsCopyImageToClipBoard"];
+            IsCopyURIToClipboard = (bool) Application.Current.Properties["IsCopyUriToClipboard"];
+        }
+
+        #endregion
 
         #region Fields
 
