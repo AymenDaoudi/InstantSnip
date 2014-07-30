@@ -49,4 +49,16 @@ The snip you took is automatically saved into your clipboard, you can paste it r
 
 ## Settings
 
+You can open settings from the system tray icon, the settings of the application allow you to :
 
+- Set the default name of the taken snip.
+- Set the default location of the snip.
+- Overwite the existing file which has the default name in the default location. (If not the default name will change automatically).
+- Delete the latest snip automatically, after a given period.
+- Copy the snip (or its path) to the clipboard.
+
+## License
+
+This project is under the [Creative Commons Attribution NonCommercial NoDerivs (CC-NC-ND)] (https://tldrlegal.com/license/creative-commons-attribution-noncommercial-noderivs-(cc-nc-nd)#summary) fully described in the (c.f. [License.txt](License.txt)) file.
+
+![CC-NC-ND](http://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png)
