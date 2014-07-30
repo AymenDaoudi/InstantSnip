@@ -16,7 +16,7 @@ InstantSnip can be a good alternative, this screenshot tool :
 
 ## Using InstantSnip
 
-<h3>Click on take a snip<h3>
+<h3>1. Click on take a snip<h3>
 
 Click on the left button to start snipping
 
