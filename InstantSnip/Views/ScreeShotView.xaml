@@ -22,7 +22,7 @@
     </i:Interaction.Triggers>
 
 
-    <Canvas >
+    <Canvas Cursor="{Binding SnippingCursor}">
         <Canvas.Background>
             <ImageBrush ImageSource="{Binding ScreenShotImageSource}"/>
         </Canvas.Background>
@@ -33,7 +33,7 @@
             </i:EventTrigger>
 
             <i:EventTrigger EventName="MouseLeftButtonUp">
-                <command:EventToCommand  Command="{Binding MouseLeftButtonUp}"/>
+                <command:EventToCommand  Command="{Binding MouseLeftButtonUp}" PassEventArgsToCommand="True"/>
             </i:EventTrigger>
 
             <i:EventTrigger EventName="MouseMove">
@@ -45,7 +45,7 @@
         <Path Stroke="Red" StrokeThickness="2" Fill="#66FFFFFF" StrokeDashArray="4 2" Margin="-1,-1,+1,+1" >
             <Path.Data>
                 <GeometryGroup >
-                    <RectangleGeometry  Rect="{Binding BackRect}"  />
+                    <RectangleGeometry  Rect="{Binding BackgroundRect}"  />
                     <RectangleGeometry  Rect="{Binding SelectionRect}" />
                 </GeometryGroup>
             </Path.Data>

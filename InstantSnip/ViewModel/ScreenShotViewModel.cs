@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -16,7 +16,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using InstantSnip.Helpers;
-using InstantSnip.Properties;
 using Microsoft.Practices.ServiceLocation;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Point = System.Drawing.Point;
@@ -25,7 +24,9 @@ namespace InstantSnip.ViewModel
 {
     public class ScreenShotViewModel : ViewModelBase
     {
+      
         #region Properties
+        
         public ImageSource ScreenShotImageSource
         {
             get
@@ -38,13 +39,13 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("ScreenShotImageSource");
             }
         }
-        public Rect BackRect
+        public Rect BackgroundRect
         {
-            get { return _backRect; }
+            get { return _backgroundRect; }
             set
             {
-                _backRect = value;
-                RaisePropertyChanged("BackRect");
+                _backgroundRect = value;
+                RaisePropertyChanged("BackgroundRect");
             }
         }
         public Rect SelectionRect
@@ -74,11 +75,17 @@ namespace InstantSnip.ViewModel
                 RaisePropertyChanged("WindowHeight");
             }
         }
-
         public bool IsSelecting { get; set; }
-
         public System.Windows.Point SelectionStartingPosition{ get; set; }
-
+        public Cursor SnippingCursor
+        {
+            get { return _snippingCursor; }
+            set
+            {
+                _snippingCursor = value;
+                RaisePropertyChanged("SnippingCursor");
+            }
+        }
         #endregion
 
 
@@ -86,15 +93,19 @@ namespace InstantSnip.ViewModel
 
         public RelayCommand WindowLoaded { get; set; }
         public RelayCommand<MouseButtonEventArgs> MouseLeftButtonDown { get; set; }
-        public RelayCommand MouseLeftButtonUp { get; set; }
+        public RelayCommand<MouseButtonEventArgs> MouseLeftButtonUp { get; set; }
         public RelayCommand<MouseEventArgs> MouseMove { get; set; }
-        
+
+     
         #endregion
 
         public ScreenShotViewModel()
         {
+            var crossCursorStream = Application.GetResourceStream(new Uri("pack://application:,,,/Images/Cursor_Cross.cur")).Stream;
+            crossCursorStream = GetCursorFromCUR(crossCursorStream, 17, 17);
+            SnippingCursor = new Cursor(crossCursorStream);
             RegisterMessages();
-            IniializetRelayCommands();
+            InializetRelayCommands();
         }
 
         #region HelperMethods
@@ -154,52 +165,63 @@ namespace InstantSnip.ViewModel
             ViewsAccessibility.GetCorresponingWindow(ServiceLocator.Current.GetInstance<MainViewModel>()).WindowState= WindowState.Minimized;
         }
 
-        private void IniializetRelayCommands()
+        private void InializetRelayCommands()
         {
             WindowLoaded = new RelayCommand(() =>
             {
-                BackRect = new Rect(0, 0, WindowWidth + 4, WindowHeight + 4);
+                BackgroundRect = new Rect(0, 0, WindowWidth + 4, WindowHeight + 4);
                 SelectionRect = new Rect(0, 0, 0,0);
             });
 
             MouseLeftButtonDown = new RelayCommand<MouseButtonEventArgs>((e) =>
                                                    {
-                                                       Messenger.Default.Send<SnippingState>(SnippingState.SelectionStarted);
+                                                       Messenger.Default.Send(SnippingState.SelectionStarted);
                                                        IsSelecting = true;
-                                                       var parent = new DependencyObject();
-                                                       if (e.Source is System.Windows.Shapes.Path)
-                                                       {
-                                                           parent = VisualTreeHelper.GetParent((System.Windows.Shapes.Path)e.Source);
-                                                       }
-                                                       else
-                                                       {
-                                                           parent = (Canvas)e.Source;
-                                                       }
-                                                       SelectionStartingPosition = new System.Windows.Point(e.GetPosition((Canvas)parent).X, e.GetPosition((Canvas)parent).Y);
+                                                       var parent = GetPathParent(e);
+                                                       SelectionStartingPosition = new System.Windows.Point(e.GetPosition(parent).X, e.GetPosition(parent).Y);
                                                    });
 
-            MouseLeftButtonUp = new RelayCommand(() =>
+            MouseLeftButtonUp = new RelayCommand<MouseButtonEventArgs>((e) =>
                                                  {
+                                                     SnippingCursor = Cursors.Arrow;
                                                      IsSelecting = false;
-                                                     Messenger.Default.Send<SnippingState>(SnippingState.SelectionFinished);
+                                                     Messenger.Default.Send(SnippingState.SelectionFinished);
                                                  });
 
             MouseMove = new RelayCommand<MouseEventArgs>(PerformSnipping);
         }
 
-        private void PerformSnipping(MouseEventArgs e)
+        private static Canvas GetPathParent(MouseButtonEventArgs e)
         {
-            if (!IsSelecting) return;
-            var parent = new DependencyObject();
+            Canvas parent;
             if (e.Source is System.Windows.Shapes.Path)
             {
-                parent = VisualTreeHelper.GetParent((System.Windows.Shapes.Path) e.Source);
+                parent = (Canvas)VisualTreeHelper.GetParent((System.Windows.Shapes.Path)e.Source);
             }
             else
             {
-                parent = (Canvas) e.Source;
+                parent = (Canvas)e.Source;
             }
+            return parent;
+        }
+        private static Canvas GetPathParent(MouseEventArgs e)
+        {
+            Canvas parent;
+            if (e.Source is System.Windows.Shapes.Path)
+            {
+                parent = (Canvas)VisualTreeHelper.GetParent((System.Windows.Shapes.Path)e.Source);
+            }
+            else
+            {
+                parent = (Canvas)e.Source;
+            }
+            return parent;
+        }
 
+        private void PerformSnipping(MouseEventArgs e)
+        {
+            if (!IsSelecting) return;
+            var parent = GetPathParent(e);
             // From here and on the code is bad, I'll inhance it
 
             double selectionWidth = 0;
@@ -208,46 +230,46 @@ namespace InstantSnip.ViewModel
             double RectLeft = 0;
             double RectTop = 0;
 
-            if ((e.GetPosition(parent as Canvas).X > SelectionStartingPosition.X) &&
-                (e.GetPosition(parent as Canvas).Y > SelectionStartingPosition.Y))
+            if ((e.GetPosition(parent).X > SelectionStartingPosition.X) &&
+                (e.GetPosition(parent).Y > SelectionStartingPosition.Y))
             {
-                selectionWidth = e.GetPosition(parent as Canvas).X -
-                                 SelectionStartingPosition.X;
-                selectionHeight = e.GetPosition(parent as Canvas).Y -
-                                  SelectionStartingPosition.Y;
+                selectionWidth = (e.GetPosition(parent).X -
+                                 SelectionStartingPosition.X);
+                selectionHeight = (e.GetPosition(parent).Y -
+                                  SelectionStartingPosition.Y);
                 RectLeft = SelectionStartingPosition.X;
                 RectTop = SelectionStartingPosition.Y;
             }
             else
             {
-                if ((e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X) &&
-                    (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y))
+                if ((e.GetPosition(parent).X < SelectionStartingPosition.X) &&
+                    (e.GetPosition(parent).Y < SelectionStartingPosition.Y))
                 {
-                    RectLeft = e.GetPosition(parent as Canvas).X;
-                    RectTop = e.GetPosition(parent as Canvas).Y;
+                    RectLeft = e.GetPosition(parent).X;
+                    RectTop = e.GetPosition(parent).Y;
 
                     selectionWidth = SelectionStartingPosition.X - RectLeft;
                     selectionHeight = SelectionStartingPosition.Y - RectTop;
                 }
                 else
                 {
-                    if (e.GetPosition(parent as Canvas).X < SelectionStartingPosition.X)
+                    if (e.GetPosition(parent).X < SelectionStartingPosition.X)
                     {
-                        RectLeft = e.GetPosition(parent as Canvas).X;
+                        RectLeft = e.GetPosition(parent).X;
                         RectTop = SelectionStartingPosition.Y;
 
                         selectionWidth = SelectionStartingPosition.X - RectLeft;
-                        selectionHeight = e.GetPosition(parent as Canvas).Y -
+                        selectionHeight = e.GetPosition(parent).Y -
                                           SelectionStartingPosition.Y;
                     }
                     else
                     {
-                        if (e.GetPosition(parent as Canvas).Y < SelectionStartingPosition.Y)
+                        if (e.GetPosition(parent).Y < SelectionStartingPosition.Y)
                         {
                             RectLeft = SelectionStartingPosition.X;
-                            RectTop = e.GetPosition(parent as Canvas).Y;
+                            RectTop = e.GetPosition(parent).Y;
 
-                            selectionWidth = e.GetPosition(parent as Canvas).X -
+                            selectionWidth = e.GetPosition(parent).X -
                                              SelectionStartingPosition.X;
                             selectionHeight = SelectionStartingPosition.Y - RectTop;
                         }
@@ -289,16 +311,33 @@ namespace InstantSnip.ViewModel
             }
             return bitmapSource;
         }
-    
+
+        public static Stream GetCursorFromCUR(Stream stream, byte hotspotx, byte hotspoty)
+        {
+            var buffer = new byte[stream.Length];
+
+            stream.Read(buffer, 0, (int)stream.Length);
+            var ms = new MemoryStream();
+
+            buffer[10] = hotspotx;
+            buffer[12] = hotspoty;
+
+            ms.Write(buffer, 0, (int)stream.Length);
+            ms.Position = 0;
+
+            return ms;
+        }
 
         #endregion
 
         #region Fields
             private ImageSource _screenShotImageSource;
-            private Rect _backRect;
+            private Rect _backgroundRect;
             private Rect _selectionRect;
             private double _windowWidth;
             private double _windowHeight;
+            private Cursor _snippingCursor;
+
         #endregion
     }
 }
