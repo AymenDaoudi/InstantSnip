@@ -126,7 +126,7 @@ namespace InstantSnip.ViewModel
              switch (state)
              {
                  case SnippingState.Saved:
-                     ViewsAccessibility.GetCorresponingWindow(ServiceLocator.Current.GetInstance<MainViewModel>()).Hide();
+                     ViewsAccessibility.GetCorresponingWindow(ServiceLocator.Current.GetInstance<MainViewModel>()).WindowState = WindowState.Minimized;
                      SaveSnipping();
                      ViewsAccessibility.GetCorresponingWindow(this).Close();
                      break;
