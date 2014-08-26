@@ -101,14 +101,19 @@ namespace InstantSnip.ViewModel
 
         public ScreenShotViewModel()
         {
-            var crossCursorStream = Application.GetResourceStream(new Uri("pack://application:,,,/Images/Cursor_Cross.cur")).Stream;
-            crossCursorStream = GetCursorFromCUR(crossCursorStream, 17, 17);
-            SnippingCursor = new Cursor(crossCursorStream);
             RegisterMessages();
             InializetRelayCommands();
         }
 
         #region HelperMethods
+
+        private void SetCrossCursor()
+        {
+            var crossCursorStream =
+                Application.GetResourceStream(new Uri("pack://application:,,,/Images/Cursor_Cross.cur")).Stream;
+            crossCursorStream = GetCursorFromCUR(crossCursorStream, 17, 17);
+            SnippingCursor = new Cursor(crossCursorStream);
+        }
 
         private void RegisterMessages()
         {
@@ -136,33 +141,32 @@ namespace InstantSnip.ViewModel
         private void SaveSnipping()
         {
             var snip = CaptureSnipping();
-            var snipLocation = (String)Application.Current.Properties["SnipLocation"];
-            var snipName = (String)Application.Current.Properties["SnipName"];
+            var snipLocation = Settings.Default.SnipLocation;
+            var snipName = Settings.Default.SnipName;
             var fileName = snipLocation + "\\" + snipName + ".png";
-            if (!(bool) Application.Current.Properties["AllowSnipOverwriting"])
+            if (!Settings.Default.AllowSnipOverwriting)
             {
                 var counter = 0;
                 do
                 {
                     var date = DateTime.Now.ToString("yyyy-MM-dd");
-                    snipName = (String)Application.Current.Properties["SnipName"] +"_" + date + "_" + ++counter;
+                    snipName = Settings.Default.SnipName +"_" + date + "_" + ++counter;
                     fileName = snipLocation + "\\" + snipName + ".png";
                 } while (Directory.GetFiles(snipLocation).Count(name => name == fileName) != 0);
             }
             snip.Save(fileName, ImageFormat.Png);
             Thread.Sleep(600);
-            if ((bool) Application.Current.Properties["IsCopyImageToClipBoard"])
+            if (Settings.Default.IsCopyImageToClipBoard)
             {
                 Clipboard.SetImage(GetBitmapSource(snip));   
             }
             else
             {
-                if ((bool)Application.Current.Properties["IsCopyUriToClipboard"])
+                if (Settings.Default.IsCopyUriToClipboard)
                 {
                     Clipboard.SetText(fileName);   
                 }
             }
-            ViewsAccessibility.GetCorresponingWindow(ServiceLocator.Current.GetInstance<MainViewModel>()).WindowState= WindowState.Minimized;
         }
 
         private void InializetRelayCommands()
@@ -220,6 +224,7 @@ namespace InstantSnip.ViewModel
 
         private void PerformSnipping(MouseEventArgs e)
         {
+            SetCrossCursor();
             if (!IsSelecting) return;
             var parent = GetPathParent(e);
             // From here and on the code is bad, I'll inhance it
