@@ -124,7 +124,7 @@ namespace InstantSnip.ViewModel
         {
             RestartSnipping = new RelayCommand(() =>
             {
-                ScreenShotWindow.Close();
+                if (ScreenShotWindow != null) ScreenShotWindow.Close();   
                 SetMainAction(StartSnipping, StartSnippingData);
             });
         }
