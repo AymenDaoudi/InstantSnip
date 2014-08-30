@@ -85,4 +85,86 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+
+
+    <Style x:Key="TextBoxInError" TargetType="{x:Type TextBox}">
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <DockPanel>
+                        <TextBlock Foreground="Red" FontSize="20" FontWeight="Bold" Text="!" FontFamily="Segoe UI Light"></TextBlock>
+                        <AdornedElementPlaceholder/>
+                    </DockPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBoxBase">
+                    <Border
+                    BorderThickness="{TemplateBinding Border.BorderThickness}"
+                    BorderBrush="{TemplateBinding Border.BorderBrush}"
+                    Background="{TemplateBinding Panel.Background}"
+                    Name="border"
+                    SnapsToDevicePixels="True">
+                        <ScrollViewer
+                        HorizontalScrollBarVisibility="Hidden"
+                        VerticalScrollBarVisibility="Hidden"
+                        Name="PART_ContentHost"
+                        Focusable="False" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="UIElement.IsEnabled"
+                             Value="False">
+                            <Setter Property="UIElement.Opacity"
+                                TargetName="border" 
+                                Value="0.56"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsMouseOver" Value="True"/>
+                                <Condition Property="Validation.HasError" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Border.BorderBrush" Value="Red"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsMouseOver" Value="True"/>
+                                <Condition Property="Validation.HasError" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Border.BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush>#FF569DE5</SolidColorBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsKeyboardFocused" Value="True"/>
+                                <Condition Property="Validation.HasError" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Border.BorderBrush">
+                                <Setter.Value>
+                                    <SolidColorBrush>#FF569DE5</SolidColorBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="UIElement.IsKeyboardFocused" Value="True"/>
+                                <Condition Property="Validation.HasError" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Border.BorderBrush" Value="Red"/>
+                        </MultiTrigger>
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter Property="Foreground" Value="Red" />
+                            <Setter Property="BorderBrush" Value="Red"/>
+                            <Setter Property="ToolTip"
+    				        Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={x:Static RelativeSource.Self}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

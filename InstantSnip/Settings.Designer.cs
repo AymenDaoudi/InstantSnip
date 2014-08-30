@@ -71,9 +71,10 @@ namespace InstantSnip {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.TimeSpan TimeBeforeDeletingPicture {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double TimeBeforeDeletingPicture {
             get {
-                return ((global::System.TimeSpan)(this["TimeBeforeDeletingPicture"]));
+                return ((double)(this["TimeBeforeDeletingPicture"]));
             }
             set {
                 this["TimeBeforeDeletingPicture"] = value;

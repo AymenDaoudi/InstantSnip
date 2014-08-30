@@ -102,7 +102,6 @@ namespace InstantSnip.ViewModel
             InitializeCloseApplicationRelayCommand();
             InitiliazeKeyDownRelayCommand();
 
-
             MainAction = StartSnipping;
         }
 

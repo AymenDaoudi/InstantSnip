@@ -14,8 +14,8 @@
     <Setting Name="AllowDeletingPictureAfterSnipping" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="TimeBeforeDeletingPicture" Type="System.TimeSpan" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="TimeBeforeDeletingPicture" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="IsCopyImageToClipBoard" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)" />

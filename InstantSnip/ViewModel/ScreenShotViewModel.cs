@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -142,6 +141,7 @@ namespace InstantSnip.ViewModel
         {
             var snip = CaptureSnipping();
             var snipLocation = Settings.Default.SnipLocation;
+            if (!Directory.Exists(Settings.Default.SnipLocation)) Directory.CreateDirectory(Settings.Default.SnipLocation);            
             var snipName = Settings.Default.SnipName;
             var fileName = snipLocation + "\\" + snipName + ".png";
             if (!Settings.Default.AllowSnipOverwriting)
@@ -152,21 +152,23 @@ namespace InstantSnip.ViewModel
                     var date = DateTime.Now.ToString("yyyy-MM-dd");
                     snipName = Settings.Default.SnipName +"_" + date + "_" + ++counter;
                     fileName = snipLocation + "\\" + snipName + ".png";
-                } while (Directory.GetFiles(snipLocation).Count(name => name == fileName) != 0);
+                } while (Directory.GetFiles(snipLocation).Contains(fileName));
             }
             snip.Save(fileName, ImageFormat.Png);
-            Thread.Sleep(600);
-            if (Settings.Default.IsCopyImageToClipBoard)
-            {
-                Clipboard.SetImage(GetBitmapSource(snip));   
-            }
-            else
-            {
-                if (Settings.Default.IsCopyUriToClipboard)
-                {
-                    Clipboard.SetText(fileName);   
-                }
-            }
+            Thread.Sleep(200);
+
+            if (Settings.Default.IsCopyImageToClipBoard) Clipboard.SetImage(GetBitmapSource(snip));   
+            else if (Settings.Default.IsCopyUriToClipboard) Clipboard.SetText(fileName);
+            
+            RecycleSnipLocation(fileName);
+        }
+
+        private static void RecycleSnipLocation(string fileName)
+        {
+            App.ListOfCapturesUriPaths.Add(fileName);
+            if ((App.IsTimerTimerDead)||(App.TimeBeforeDeletingSpan==null)) return;            
+            App.TimeBeforeDeletingSpan.Stop();
+            App.TimeBeforeDeletingSpan.Start();
         }
 
         private void InializetRelayCommands()

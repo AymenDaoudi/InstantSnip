@@ -6,8 +6,9 @@
         xmlns:ignore="http://www.ignore.com"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
+        xmlns:helpers="clr-namespace:InstantSnip.Helpers"
         mc:Ignorable="d ignore"
-        DataContext="{Binding SettingsViewModel, Source={StaticResource Locator}}" Width="500" Height="250" Icon="/InstantSnip;component/Images/InstantSnip.png" ResizeMode="NoResize" ShowInTaskbar="False" Title="InstantSnip settings" Topmost="True">
+        DataContext="{Binding SettingsViewModel, Source={StaticResource Locator}}" Width="600" Height="280" Icon="/InstantSnip;component/Images/InstantSnip.png" ResizeMode="NoResize" ShowInTaskbar="False" Title="InstantSnip settings" Topmost="True">
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -22,7 +23,7 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="1.5*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="1.5*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -34,30 +35,58 @@
         <Label Grid.Row="3" Content="Overwrite existing snip ?" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2,0,0,0" FontFamily="Segoe UI Light" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center"/>
         <Label Grid.Row="4" Content="Delete picture after snipping ?" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="2,0,0,0" FontFamily="Segoe UI Light" FontSize="16" FontWeight="Bold" VerticalContentAlignment="Center"/>
 
-        <TextBox x:Name="Tb_SnipName" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10,1" VerticalContentAlignment="Center" Text="{Binding SnipName, Mode=TwoWay}"/>
-        <Grid Grid.Row="2" Grid.Column="1" Margin="10,1">
+        <TextBox x:Name="Tb_SnipName" Grid.Row="1" Grid.Column="1" 
+                 HorizontalAlignment="Stretch" Margin="10,1" 
+                 VerticalContentAlignment="Center"
+                 Style="{DynamicResource TextBoxInError}">
+            <TextBox.Text>
+                <Binding Path="SnipName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <helpers:SnipNameRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Grid Grid.Row="2" Grid.Column="1" Margin="10,1,10,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="50"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="Tb_SnipLocation" HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding SnipLocation, Mode=TwoWay}" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <Button Grid.Column="1" Content="..." Command="{Binding ChangeLocation}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="2,0,0,0" Height="28" VerticalAlignment="Top"/>
+            <TextBox HorizontalAlignment="Stretch" TextWrapping="Wrap" Text="{Binding SnipLocation, Mode=OneWay}" VerticalContentAlignment="Center" IsEnabled="False"/>
+            <Button Grid.Column="1" Content="..." Command="{Binding ChangeLocation}"  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="2,0,0,0"/>
         </Grid>
 
-        <CheckBox x:Name="Cb_AllowSnipOverwriting" Grid.Row="3" Grid.Column="1" Content="(If not, duplicates will be created)" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0" IsChecked="{Binding AllowSnipOverwriting, Mode=TwoWay}" FontFamily="Segoe UI Light"/>
+        <CheckBox Grid.Row="3" Grid.Column="1" Content="(If not, duplicates will be created)" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="10,0" IsChecked="{Binding AllowSnipOverwriting, Mode=TwoWay}" FontFamily="Segoe UI Light"/>
 
         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="10,0">
             <CheckBox x:Name="Cb_AllowDeletingPictures" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsChecked="{Binding AllowDeletingPictureAfterSnipping, Mode=TwoWay}"/>
-            <TextBox x:Name="Tb_TimeBeforeDeletingPictures" HorizontalAlignment="Stretch" Text="{Binding TimeBeforeDeletingPicture.Seconds, Mode=OneWay}" BorderThickness="1" Margin="2,1" Width="100" AllowDrop="False" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=Cb_AllowDeletingPictures}"/>
+            <TextBox HorizontalAlignment="Stretch" BorderThickness="1" Margin="10,1,2,1" Width="100" AllowDrop="False" VerticalContentAlignment="Center" IsEnabled="{Binding IsChecked, ElementName=Cb_AllowDeletingPictures}"
+                 Style="{DynamicResource TextBoxInError}">
+                <TextBox.Text>
+                    <Binding Path="TimeBeforeDeletingPicture" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding.ValidationRules>
+                            <helpers:TimeBeforeDeletingRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
             <Label Content="Secconds" HorizontalAlignment="Left" VerticalAlignment="Center" FontFamily="Segoe UI Light"/>
         </StackPanel>
         <StackPanel Grid.Column="1" Margin="11,2,5,2" Orientation="Vertical" Grid.Row="5" HorizontalAlignment="Stretch" VerticalAlignment="Center">
             <RadioButton GroupName="CopyToClipboardGroup" IsChecked="{Binding IsCopyURIToClipboard, Mode=TwoWay}" FontFamily="Segoe UI Light">Copy snip URI to clipboard</RadioButton>
             <RadioButton GroupName="CopyToClipboardGroup" IsChecked="{Binding IsCopyImageToClipBoard, Mode=TwoWay}" FontFamily="Segoe UI Light">Copy Image to clipboard</RadioButton>
         </StackPanel>
-        <StackPanel Grid.Column="1" Margin="0,2,10,2" Orientation="Horizontal" Grid.Row="6" HorizontalAlignment="Right">
-            <Button Command="{Binding SaveSettings}" Width="80" Margin="0,1,1,1" HorizontalAlignment="Right">Save</Button>
-            <Button Command="{Binding CancelSettings}" Width="80" Margin="1,1,0,1" HorizontalAlignment="Right">Cancel</Button>
-        </StackPanel>
+        <Border Margin="0,2,10,2" Grid.Row="6" Height="30" VerticalAlignment="Top" Grid.ColumnSpan="2" BorderThickness="0,2,0,0">
+            <Border.BorderBrush>
+                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                    <GradientStop Color="Black"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            <StackPanel Orientation="Horizontal" Width="162" HorizontalAlignment="Right">
+                <Button Command="{Binding SaveSettings}" Width="80" Margin="0,1,1,1" HorizontalAlignment="Right" Content="Save"/>
+                <Button Command="{Binding CancelSettings}" Width="80" Margin="1,1,0,1" HorizontalAlignment="Right" Content="Cancel"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

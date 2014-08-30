@@ -1,11 +1,12 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="clr-namespace:InstantSnip.Converters"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:command="http://www.galasoft.ch/mvvmlight"
-    mc:Ignorable="d" x:Class="InstantSnip.MainView"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:InstantSnip.Converters"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        mc:Ignorable="d" x:Class="InstantSnip.MainView"
         DataContext="{Binding Main, Source={StaticResource Locator}}" 
         AllowsTransparency="True" 
         WindowStyle="None" 
@@ -15,7 +16,9 @@
         d:DesignHeight="92" 
         d:DesignWidth="195"
         Height="90" Width="195"
-        WindowState="{Binding WindowState, Mode=TwoWay}" Icon="/InstantSnip;component/Images/InstantSnip.png" Title="InstantSnip">
+        WindowState="{Binding WindowState, Mode=TwoWay}" 
+        Icon="/InstantSnip;component/Images/InstantSnip.png" 
+        Title="InstantSnip">
     
     <Window.Resources>
         <converters:StringToPathConverter x:Key="StringToPathConverter" />
