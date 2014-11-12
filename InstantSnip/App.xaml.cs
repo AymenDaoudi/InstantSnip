@@ -38,7 +38,8 @@ namespace InstantSnip
         {
             DispatcherHelper.Initialize();
             ListOfCapturesUriPaths = new List<string>();
-            if (Settings.Default.AllowDeletingPictureAfterSnipping) SetSnipDeletingTimer(Settings.Default.TimeBeforeDeletingPicture);
+            if (Settings.Default.AllowDeletingPictureAfterSnipping) 
+                SetSnipDeletingTimer(Settings.Default.TimeBeforeDeletingPicture);
         }
 
         public static void SetSnipDeletingTimer(double d)
@@ -59,7 +60,6 @@ namespace InstantSnip
         {
             WpfSingleInstance.Make();
 
-            
             if (Settings.Default.IsFirstRun)
             {
                 Settings.Default.IsFirstRun = false;

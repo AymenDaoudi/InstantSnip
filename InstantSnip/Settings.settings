@@ -12,7 +12,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AllowDeletingPictureAfterSnipping" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="TimeBeforeDeletingPicture" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0</Value>
