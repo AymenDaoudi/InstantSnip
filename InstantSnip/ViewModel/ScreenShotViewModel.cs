@@ -23,9 +23,10 @@ namespace InstantSnip.ViewModel
 {
     public class ScreenShotViewModel : ViewModelBase
     {
-      
+
         #region Properties
-        
+
+        private ImageSource _screenShotImageSource;
         public ImageSource ScreenShotImageSource
         {
             get
@@ -34,82 +35,120 @@ namespace InstantSnip.ViewModel
             }
             set
             {
+                if (_screenShotImageSource == value) return;
                 _screenShotImageSource = value;
-                RaisePropertyChanged("ScreenShotImageSource");
+                RaisePropertyChanged(nameof(ScreenShotImageSource));
             }
         }
+
+        private Rect _backgroundRect;
         public Rect BackgroundRect
         {
             get { return _backgroundRect; }
             set
             {
+                if (_backgroundRect == value) return;
                 _backgroundRect = value;
-                RaisePropertyChanged("BackgroundRect");
+                RaisePropertyChanged(nameof(BackgroundRect));
             }
         }
+
+        private Rect _selectionRect;
         public Rect SelectionRect
         {
             get { return _selectionRect; }
             set
             {
+                if (_selectionRect == value) return;
                 _selectionRect = value;
-                RaisePropertyChanged("SelectionRect");
+                RaisePropertyChanged(nameof(SelectionRect));
             }
         }
+
+        private double _windowWidth;
         public double WindowWidth
         {
             get { return _windowWidth; }
             set
             {
+                if (_windowWidth == value) return;
                 _windowWidth = value;
-                RaisePropertyChanged("WindowWidth");
+                RaisePropertyChanged(nameof(WindowWidth));
             }
         }
+
+        private double _windowHeight;
         public double WindowHeight
         {
             get { return _windowHeight; }
             set
             {
+                if (_windowHeight == value) return;
                 _windowHeight = value;
-                RaisePropertyChanged("WindowHeight");
+                RaisePropertyChanged(nameof(WindowHeight));
             }
         }
-        public bool IsSelecting { get; set; }
-        public System.Windows.Point SelectionStartingPosition{ get; set; }
+
+        private Cursor _snippingCursor;
         public Cursor SnippingCursor
         {
             get { return _snippingCursor; }
             set
             {
                 _snippingCursor = value;
-                RaisePropertyChanged("SnippingCursor");
+                RaisePropertyChanged(nameof(SnippingCursor));
             }
         }
-        #endregion
 
+        public bool IsSelecting { get; set; }
+
+        public System.Windows.Point SelectionStartingPosition{ get; set; }
+
+        #endregion
 
         #region RelayCommands
 
-        public RelayCommand WindowLoaded { get; set; }
-        public RelayCommand<MouseButtonEventArgs> MouseLeftButtonDown { get; set; }
-        public RelayCommand<MouseButtonEventArgs> MouseLeftButtonUp { get; set; }
-        public RelayCommand<MouseEventArgs> MouseMove { get; set; }
+        private RelayCommand _windowLoaded;
 
-     
+        public RelayCommand WindowLoaded => _windowLoaded ?? (_windowLoaded = new RelayCommand(() =>
+                                                                                                   {
+                                                                                                       BackgroundRect = new Rect(0, 0, WindowWidth + 4, WindowHeight + 4);
+                                                                                                       SelectionRect = new Rect(0, 0, 0, 0);
+                                                                                                   }));
+
+        private RelayCommand<MouseButtonEventArgs> _mouseLeftButtonDown;
+        public RelayCommand<MouseButtonEventArgs> MouseLeftButtonDown => _mouseLeftButtonDown ?? (_mouseLeftButtonDown = new RelayCommand<MouseButtonEventArgs>((e) =>
+                                                                                                   {
+                                                                                                       Messenger.Default.Send(SnippingState.SelectionStarted);
+                                                                                                       IsSelecting = true;
+                                                                                                       var parent = GetPathParent(e);
+                                                                                                       SelectionStartingPosition = new System.Windows.Point(e.GetPosition(parent).X, e.GetPosition(parent).Y);
+                                                                                                   }));
+
+        private RelayCommand<MouseButtonEventArgs> _mouseLeftButtonUp;
+
+        public RelayCommand<MouseButtonEventArgs> MouseLeftButtonUp => _mouseLeftButtonUp ?? (_mouseLeftButtonUp = new RelayCommand<MouseButtonEventArgs>((e) =>
+                                                                                                   {
+                                                                                                       SnippingCursor = Cursors.Arrow;
+                                                                                                       IsSelecting = false;
+                                                                                                       Messenger.Default.Send(SnippingState.SelectionFinished);
+                                                                                                   }));
+
+        private RelayCommand<MouseEventArgs> _mouseMove;
+        public RelayCommand<MouseEventArgs> MouseMove => _mouseMove ?? (_mouseMove = new RelayCommand<MouseEventArgs>(PerformSnipping));
+
         #endregion
 
         public ScreenShotViewModel()
         {
             RegisterMessages();
-            InializetRelayCommands();
         }
 
         #region HelperMethods
 
         private void SetCrossCursor()
         {
-            var crossCursorStream =
-                Application.GetResourceStream(new Uri("pack://application:,,,/Images/Cursor_Cross.cur")).Stream;
+            var crossCursorStream = Application.GetResourceStream(new Uri("pack://application:,,,/Images/Cursor_Cross.cur"))?.Stream;
             crossCursorStream = GetCursorFromCUR(crossCursorStream, 17, 17);
             SnippingCursor = new Cursor(crossCursorStream);
         }
@@ -143,7 +182,7 @@ namespace InstantSnip.ViewModel
             var snipLocation = Settings.Default.SnipLocation;
             if (!Directory.Exists(Settings.Default.SnipLocation)) Directory.CreateDirectory(Settings.Default.SnipLocation);            
             var snipName = Settings.Default.SnipName;
-            var fileName = snipLocation + "\\" + snipName + ".png";
+            var fileName = string.Concat(snipLocation, "\\", snipName, ".png");
             if (!Settings.Default.AllowSnipOverwriting)
             {
                 var counter = 0;
@@ -169,32 +208,6 @@ namespace InstantSnip.ViewModel
             if ((App.IsTimerTimerDead)||(App.TimeBeforeDeletingSpan==null)) return;            
             App.TimeBeforeDeletingSpan.Stop();
             App.TimeBeforeDeletingSpan.Start();
-        }
-
-        private void InializetRelayCommands()
-        {
-            WindowLoaded = new RelayCommand(() =>
-            {
-                BackgroundRect = new Rect(0, 0, WindowWidth + 4, WindowHeight + 4);
-                SelectionRect = new Rect(0, 0, 0,0);
-            });
-
-            MouseLeftButtonDown = new RelayCommand<MouseButtonEventArgs>((e) =>
-                                                   {
-                                                       Messenger.Default.Send(SnippingState.SelectionStarted);
-                                                       IsSelecting = true;
-                                                       var parent = GetPathParent(e);
-                                                       SelectionStartingPosition = new System.Windows.Point(e.GetPosition(parent).X, e.GetPosition(parent).Y);
-                                                   });
-
-            MouseLeftButtonUp = new RelayCommand<MouseButtonEventArgs>((e) =>
-                                                 {
-                                                     SnippingCursor = Cursors.Arrow;
-                                                     IsSelecting = false;
-                                                     Messenger.Default.Send(SnippingState.SelectionFinished);
-                                                 });
-
-            MouseMove = new RelayCommand<MouseEventArgs>(PerformSnipping);
         }
 
         private static Canvas GetPathParent(MouseButtonEventArgs e)
@@ -337,14 +350,5 @@ namespace InstantSnip.ViewModel
 
         #endregion
 
-        #region Fields
-            private ImageSource _screenShotImageSource;
-            private Rect _backgroundRect;
-            private Rect _selectionRect;
-            private double _windowWidth;
-            private double _windowHeight;
-            private Cursor _snippingCursor;
-
-        #endregion
     }
 }

@@ -16,7 +16,7 @@
         Height="{Binding WindowHeight, Mode=OneWayToSource}">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding WindowLoaded, Mode=TwoWay}" >
+            <i:InvokeCommandAction Command="{Binding WindowLoaded, Mode=OneWay}" >
             </i:InvokeCommandAction>
         </i:EventTrigger>
     </i:Interaction.Triggers>

@@ -42,7 +42,7 @@
             <TextBox.Text>
                 <Binding Path="SnipName" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
-                        <helpers:SnipNameRule/>
+                        <helpers:SnipNameValidationRule/>
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
