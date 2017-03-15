@@ -19,33 +19,31 @@ InstantSnip can be a good alternative, this screenshot tool :
 
 Click on the left button to start snipping
 
-
-![Take a snip] (https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/TakeASnip.png)
-
+<img src="https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/TakeASnip.png">
 
 ### 2. Select area
 
 Drag the mouse all by clicking  on the mouse left button to select the area you want to capture from the screen.
 
-![alt text] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/MakeSelection.png)
+<img src="https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/MakeSelection.png">
 
 ### 3. Save
 
 By releasing the mouse left button and terminating your selection, you will need to click on the save button
 
-![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/Save.png)
+<img src="https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/Save.png">
 
 ### 4. `Escape` to minimize the application to the system tray if you want
 
 Press the `Escape` key on your keyboard to minimize the application to your system tray notification center.
 
-![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/SystemTray.png)
+<img src="https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/SystemTray.png">
 
 ### 5. done, you ready to go you can past into your friend chat conversation 
 
 The snip you took is automatically saved into your clipboard, you can paste it right away.
 
-![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/PastFromClipboard.png)
+<img src="https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/PastFromClipboard.png">
 
 ## Settings
 
