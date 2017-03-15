@@ -20,14 +20,14 @@ InstantSnip can be a good alternative, this screenshot tool :
 Click on the left button to start snipping
 
 
-![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/TakeASnip.png)
+![Take a snip] (https://github.com/AymenDaoudi/InstantSnip/blob/master/ScreenShots/TakeASnip.png)
 
 
 ### 2. Select area
 
 Drag the mouse all by clicking  on the mouse left button to select the area you want to capture from the screen.
 
-![Take a snip] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/MakeSelection.png)
+![alt text] (https://raw.githubusercontent.com/AymenDaoudi/InstantSnip/master/ScreenShots/MakeSelection.png)
 
 ### 3. Save
 
